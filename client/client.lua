@@ -17,18 +17,18 @@ local ZoneMed = false
 local ZonePoor = false
 local ZoneBlack = false
 
-RegisterCommand('selldrugs', function(source)
+RegisterCommand(Congig.Command, function(source)
     TriggerEvent('rsg-contraband:client:contrabandselling')
 end)
 
 RegisterNetEvent('rsg-contraband:client:sellzonecheck')
 AddEventHandler('rsg-contraband:client:sellzonecheck', function()
-    RSGCore.Functions.TriggerCallback('police:GetCops', function(result)
+    RSGCore.Functions.TriggerCallback('rsg-lawman:server:getlaw', function(result)
         CurrentLawmen = result
         if Config.Debug then print(result .. "lAW") end
         local player = (GetEntityCoords(PlayerPedId()))
         local current_district = Citizen.InvokeNative(0x43AD8FC02B429D33, player, 1)
-        local HotZone = {
+        local HotZone = {	-- Void Line You Want Hot Zone --
             [1] = { townname = 'Strawberry', zone = 427683330 },
         }
         local foreign = {
@@ -118,19 +118,15 @@ RegisterNetEvent('rsg-contraband:client:contrabandselling', function()
                 if not contrabandselling then
                     contrabandselling = true
                     LocalPlayer.state:set("inv_busy", true, true)
-                    --TriggerEvent('bm-weapons:client:Notifications', Lang:t('title.drugs'), Lang:t('success.selling'), 5000)
-					RSGCore.Functions.Notify('Contraband Selling', 'success', 5000)
+		    RSGCore.Functions.Notify('Contraband Selling', 'success', 5000)
                     startLocation = GetEntityCoords(PlayerPedId())
                 else
                     contrabandselling = false
                     LocalPlayer.state:set("inv_busy", false, true)
-                    --TriggerEvent('bm-weapons:client:Notifications', Lang:t('title.drugs'), Lang:t('error.stopped'), 5000)
-					RSGCore.Functions.Notify('Stoped Selling', 'error', 5000)
-					
+		    RSGCore.Functions.Notify('Stoped Selling', 'error', 5000)		
                 end
             else
-                --TriggerEvent('bm-weapons:client:Notifications', Lang:t('title.drugs'), Lang:t('error.empty'), 5000)
-				RSGCore.Functions.Notify('No more contraband to sell!', 'error', 5000)
+		RSGCore.Functions.Notify('No more contraband to sell!', 'error', 5000)
                 LocalPlayer.state:set("inv_busy", false, true)
             end
         end)
@@ -139,7 +135,6 @@ end)
 RegisterNetEvent('rsg-contraband:client:refreshAvailableContraband', function(items)
     availableContraband = items
     if #availableContraband <= 0 then
-        --TriggerEvent('bm-weapons:client:Notifications', Lang:t('title.drugs'), Lang:t('error.empty'), 5000)
 		RSGCore.Functions.Notify('No more contraband to sell!', 'error', 5000)
         contrabandselling = false
         LocalPlayer.state:set("inv_busy", false, true)
@@ -179,8 +174,7 @@ local function SellToPed(ped)
         if lastPed[i] == ped then
             hasTarget = false
             if Config.Debug then print("Already Sold to Ped") end
-            --TriggerEvent('bm-weapons:client:Notifications', Lang:t('title.drugs'), Lang:t('error.notwant'), 5000)
-			RSGCore.Functions.Notify('Person not interested!', 'error', 5000)
+		RSGCore.Functions.Notify('Person not interested!', 'error', 5000)
             return
         end
     end
@@ -256,8 +250,7 @@ local function SellToPed(ped)
             pedDist = #(coords - pedCoords)
             if getRobbed == 18 or getRobbed == 9 then
                 TriggerServerEvent('rsg-contraband:server:robContraband', availableContraband[contrabandType].item, contrabandAmount)
-                --TriggerEvent('bm-weapons:client:Notifications', Lang:t('title.drugs'), Lang:t('error.rob'), 3000)
-				RSGCore.Functions.Notify('You have been robbed!', 'error', 5000)
+		RSGCore.Functions.Notify('You have been robbed!', 'error', 5000)
                 stealingPed = ped
                 stealData = {
                     item = availableContraband[contrabandType].item,
@@ -279,42 +272,27 @@ local function SellToPed(ped)
                     if ZoneHot then
                         if Config.Debug then print("reward hot") end
                         reward = randomPrice * 4
-                        --TriggerEvent('bm-weapons:client:Notifications', Lang:t('title.drugs'),
-                            --"Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 1000)
-							--RSGCore.Functions.Notify("Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 'success', 5000)
-							DrawTxt("Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 0.14, 0.90, 0.27, 0.27, true, 255, 128, 0, 255, false)
+			DrawTxt("Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 0.14, 0.90, 0.27, 0.27, true, 255, 128, 0, 255, false)
                     end
                     if ZoneForeign then
                             if Config.Debug then print("reward foreign") end
                             reward = randomPrice / 3
-                            --TriggerEvent('bm-weapons:client:Notifications', Lang:t('title.drugs'),
-                            --"Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 1000)
-							--RSGCore.Functions.Notify("Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 'success', 5000)
-							DrawTxt("Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 0.14, 0.90, 0.27, 0.27, true, 255, 128, 0, 255, false)
+                            DrawTxt("Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 0.14, 0.90, 0.27, 0.27, true, 255, 128, 0, 255, false)
                     end
                     if ZoneHigh then
                             if Config.Debug then print("reward high") end
                             reward = randomPrice * 3
-                            --TriggerEvent('bm-weapons:client:Notifications', Lang:t('title.drugs'),
-                                --"Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 1000)
-								--RSGCore.Functions.Notify("Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 'success', 5000)
-								DrawTxt("Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 0.14, 0.90, 0.27, 0.27, true, 255, 128, 0, 255, false)
+                            DrawTxt("Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 0.14, 0.90, 0.27, 0.27, true, 255, 128, 0, 255, false)
                     end
                     if ZoneMed then
                             if Config.Debug then print("reward med") end
                             reward = randomPrice * 1.5
-                            --TriggerEvent('bm-weapons:client:Notifications', Lang:t('title.drugs'),
-                                --"Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 1000)
-								--RSGCore.Functions.Notify("Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 'success', 5000)
-								DrawTxt("Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 0.14, 0.90, 0.27, 0.27, true, 255, 128, 0, 255, false)
+                            DrawTxt("Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 0.14, 0.90, 0.27, 0.27, true, 255, 128, 0, 255, false)
                     end
                     if ZonePoor then
                             if Config.Debug then print("reward poor") end
                             reward = randomPrice / 2
-                            --TriggerEvent('bm-weapons:client:Notifications', Lang:t('title.drugs'),
-                                --"Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 1000)
-								--RSGCore.Functions.Notify("Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 'success', 5000)
-								DrawTxt("Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 0.14, 0.90, 0.27, 0.27, true, 255, 128, 0, 255, false)
+                            DrawTxt("Sell " ..contrabandAmount.." ".. item .. " for $" .. reward .. " [G] Confirm [R] Decline", 0.14, 0.90, 0.27, 0.27, true, 255, 128, 0, 255, false)
                     end
                     if IsControlJustPressed(0, 0x5415BE48) then --G
                         FreezeEntityPosition(ped, true)
@@ -379,8 +357,7 @@ local function SellToPed(ped)
                     hasTarget = false
                     lastPed[#lastPed+1] = ped
                     TriggerEvent('rsg-contraband:client:refreshzones')
-                    --TriggerEvent('bm-weapons:client:Notifications', Lang:t('title.drugs'), Lang:t('error.nolaw'), 5000)
-					RSGCore.Functions.Notify('Not Enough Law', 'error', 5000)
+                    RSGCore.Functions.Notify('Not Enough Law', 'error', 5000)
                 end
             end
             Wait(3)
@@ -410,9 +387,7 @@ CreateThread(function()
                 local pedpos = GetEntityCoords(stealingPed)
                 if Config.Debug then print('PED IS DEAD AND HAS DRUGS') end
                 if #(pos - pedpos) < 1.5 then
-                    --TriggerEvent('bm-weapons:client:Notifications', Lang:t('title.drugs'), "Press [G] to get drugs back!", 1000)
-					--RSGCore.Functions.Notify("Press [G] to get drugs back!", 'error', 5000)
-					DrawTxt("Press [G] to get drugs back!", 0.14, 0.90, 0.27, 0.27, true, 255, 128, 0, 255, false)
+                    DrawTxt("Press [G] to get drugs back!", 0.14, 0.90, 0.27, 0.27, true, 255, 128, 0, 255, false)
                     if Config.Debug then print('SIGN ON BODY') end
                     if IsControlJustPressed(0, 0x760A9C6F) then --G 0x760A9C6F
                         TaskStartScenarioInPlace(ped, GetHashKey('WORLD_HUMAN_CROUCH_INSPECT'), -1, true, false, false, false)
@@ -453,10 +428,6 @@ CreateThread(function()
                         SellToPed(closestPed)
                     end
                 end
-            end
-            local startDist = #(startLocation - coords)
-            if startDist > 10 then
-                --toFarAway()
             end
         end
         Wait(sleep)
