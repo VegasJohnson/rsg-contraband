@@ -25,7 +25,7 @@ RegisterNetEvent('rsg-contraband:client:sellzonecheck')
 AddEventHandler('rsg-contraband:client:sellzonecheck', function()
     RSGCore.Functions.TriggerCallback('rsg-lawman:server:getlaw', function(result)
         CurrentLawmen = result
-        if Config.Debug then print(result .. "lAW") end
+        if Config.Debug then print(result .. "LAW") end
         local player = (GetEntityCoords(PlayerPedId()))
         local current_district = Citizen.InvokeNative(0x43AD8FC02B429D33, player, 1)
         local HotZone = {	-- Void Line You Want Hot Zone --
@@ -66,7 +66,7 @@ AddEventHandler('rsg-contraband:client:sellzonecheck', function()
 
         }
         for k, i in pairs(HotZone) do
-            if CurrentLawmen >= 0 then --3
+            if CurrentLawmen >= 5 then --3
                 if current_district == i.zone then
                     ZoneHot = true
                     if Config.Debug then print("Hot Zone") end
@@ -80,7 +80,7 @@ AddEventHandler('rsg-contraband:client:sellzonecheck', function()
             end
         end
         for k, i in pairs(HighZone) do
-            if CurrentLawmen >= 0 then ---2
+            if CurrentLawmen >= 4 then ---2
                 if current_district == i.zone then
                     ZoneHigh = true
                     if Config.Debug then print("High Zone") end
@@ -88,7 +88,7 @@ AddEventHandler('rsg-contraband:client:sellzonecheck', function()
             end
         end
         for k, i in pairs(MedZone) do
-            if CurrentLawmen >= 0 then  ---1
+            if CurrentLawmen >=3 then  ---1
                 if current_district == i.zone then
                     ZoneMed = true
                     if Config.Debug then print("Med Zone") end
@@ -135,7 +135,7 @@ end)
 RegisterNetEvent('rsg-contraband:client:refreshAvailableContraband', function(items)
     availableContraband = items
     if #availableContraband <= 0 then
-		RSGCore.Functions.Notify('No more contraband to sell!', 'error', 5000)
+	RSGCore.Functions.Notify('No more contraband to sell!', 'error', 5000)
         contrabandselling = false
         LocalPlayer.state:set("inv_busy", false, true)
     end
