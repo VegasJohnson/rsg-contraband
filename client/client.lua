@@ -17,7 +17,7 @@ local ZoneMed = false
 local ZonePoor = false
 local ZoneBlack = false
 
-RegisterCommand(Congig.Command, function(source)
+RegisterCommand(Config.Command, function(source)
     TriggerEvent('rsg-contraband:client:contrabandselling')
 end)
 
